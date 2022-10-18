@@ -1,0 +1,16 @@
+version: '3.2'
+services:
+  unibs-osha-db:
+    image: python:3.8
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+    restart: always
+    container_name: unibs-osha-db-container
+    volumes:
+    # host/folder:container/folder
+      - .:/docker/repo
+    working_dir: /docker/repo
+    command: bash -c ./docker-reboot.sh
+#    ports:
+#      - 8080:8080

@@ -1,0 +1,1 @@
+git pull && docker restart unibs-osha-db-container && tail -F reboot.log
