@@ -16,6 +16,7 @@ class SearchPage:
         self.page_size = page_size
         # from body
         self.instances_count = -1
+        self.accident_detail_ids = []
         self.results_text = 'na'
         if page is None:
             office_folder = self_folder.parent / 'data' / ('office' + self.office)
@@ -37,6 +38,16 @@ class SearchPage:
         self.search_page.load()
         soup = BeautifulSoup(self.search_page.body, 'html.parser')
 
+        self._fill_results_info(soup)
+        print(f"`{self.results_text}`")
+        elems = soup.find_all('input', {'name': 'id'})
+        self.accident_detail_ids = []
+        for e in elems:
+            e: Tag
+            accident_detail_id = e.attrs.get('value')
+            self.accident_detail_ids.append(accident_detail_id)
+
+    def _fill_results_info(self, soup):
         def results_filter(tag: Tag):
             return tag.name == 'div' and tag.get('class') == ['text-right'] and \
                    'Results' in tag.text
@@ -49,4 +60,3 @@ class SearchPage:
         else:
             self.results_text = ''
             self.instances_count = -1
-        print(f"`{self.results_text}`")
