@@ -1,5 +1,5 @@
 from estrai_codici_office import estrai_codici_office
-from istanza_pagina import IstanzaPagina
+from osha.search_page import SearchPage
 
 
 # url = 'https://www.osha.gov/pls/imis/AccidentSearch.html'
@@ -10,7 +10,7 @@ def main():
     codici_office = estrai_codici_office()
     for office_index, office in enumerate(codici_office):
         print(f'Codice office {office} {office_index + 1}/{len(codici_office)}')
-        pagina = IstanzaPagina(office, istanza_index, pagina_size)
+        pagina = SearchPage(office, istanza_index, pagina_size)
         while pagina is not None:
             pagina.load()
             pagina = pagina.next()

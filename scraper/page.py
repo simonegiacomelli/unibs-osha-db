@@ -4,7 +4,7 @@ from url_helper import url_open
 
 
 class Page:
-    def __init__(self, url: str, path: Path):
+    def __init__(self, path: Path, url: str = ''):
         self.path = path
         self.url = url
         self.status = 0
