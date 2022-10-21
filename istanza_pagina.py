@@ -56,3 +56,16 @@ class IstanzaPagina:
 
     def _catalogue_from_body(self):
         self.catalogue = InstanceCatalogue(self.body)
+
+    def load(self):
+        print('  ', end='')
+        if not self.exists():
+            print(f'pagina {self} segue caricamento... ', end='')
+            self.load_from_url()
+            self.salva()
+        else:
+            self.load_from_disk()
+            print(f'pagina {self} gia'' presente ', end='')
+
+        print(f"`{self.catalogue.results_text}`")
+
