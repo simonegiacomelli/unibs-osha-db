@@ -9,11 +9,17 @@ from scraper.page import Page
 class TestInstanceList(unittest.TestCase):
 
     def test_box_count(self):
-        self._verify_instance_count(20, 'office-0100000-index-000000-detail.html')
+        target = self._target('office-0100000-index-000000-detail.html')
+        self.assertEqual(20, len(target.boxes))
 
-    def _verify_instance_count(self, expected_box_count, html):
+    def test_complex_box(self):
+        target = self._target('complex-box.html')
+        self.assertEqual(1, len(target.boxes))
+        box = target.boxes[0]
+        pass
+
+    def _target(self, html) -> DetailPage:
         path = (folder_structure.detail_pages / html)
         target = DetailPage(page=Page(path))
         target.parse()
-        self.assertEqual(len(target.boxes), expected_box_count)
-
+        return target
