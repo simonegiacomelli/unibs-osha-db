@@ -5,7 +5,7 @@ from istanza_pagina import IstanzaPagina
 # url = 'https://www.osha.gov/pls/imis/AccidentSearch.html'
 # content = url_open(url)
 def main():
-    pagina_size = 20
+    pagina_size = 200
     istanza_index = 0
     for office in estrai_codici_office():
 
@@ -13,11 +13,12 @@ def main():
         while pagina is not None:
             if not pagina.exists():
                 print(f'pagina {pagina} segue caricamento')
-                pagina.load()
+                pagina.load_from_url()
                 pagina.salva()
                 # pagina.salvaDatiIstanze()
             else:
                 print(f'pagina {pagina} gia'' presente')
+
             pagina = pagina.next()
 
 

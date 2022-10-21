@@ -45,17 +45,17 @@ def lista_istanze_url(office: str, istanza_index: int, pagina_size: int) -> str:
                    '&fatal=' \
                    '&officetype=All' \
                    f'&office={office}' \
-                   '&startmonth=10' \
-                   '&startday=18' \
-                   '&startyear=2023' \
-                   '&endmonth=10' \
-                   '&endday=18' \
-                   '&endyear=2002' \
+                   '&startmonth=12' \
+                   '&startday=31' \
+                   '&startyear=2099' \
+                   '&endmonth=1' \
+                   '&endday=1' \
+                   '&endyear=1984' \
                    '&keyword_list=' \
                    '&p_start=' \
                    f'&p_finish={istanza_index}' \
                    '&p_sort=' \
-                   '&p_desc=DESC' \
+                   '&p_desc=ASC' \
                    '&p_direction=Next' \
                    f'&p_show={pagina_size}'
     return url_template
