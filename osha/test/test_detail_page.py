@@ -12,6 +12,10 @@ class TestInstanceList(unittest.TestCase):
         target = self._target('office-0100000-index-000000-detail.html')
         self.assertEqual(20, len(target.boxes))
 
+    def test_box_count_bis(self):
+        target = self._target('nine-boxes.html')
+        self.assertEqual(9, len(target.boxes))
+
     def test_complex_box(self):
         target = self._target('complex-box.html')
         self.assertEqual(1, len(target.boxes))
