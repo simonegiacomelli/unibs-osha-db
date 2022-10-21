@@ -2,3 +2,4 @@ out*
 docker-log
 reboot.log
 data
+.idea
