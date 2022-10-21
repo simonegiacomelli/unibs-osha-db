@@ -13,6 +13,7 @@ def main():
         pagina = SearchPage(office, istanza_index, pagina_size)
         while pagina is not None:
             pagina.parse()
+            pagina.load_details().parse()
             pagina = pagina.next()
 
 

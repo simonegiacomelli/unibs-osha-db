@@ -21,7 +21,7 @@ class TestInstanceList(unittest.TestCase):
                                     '142137.015', '143283.015'])
 
     def verify_instance_count(self, expected_instance_count, html, accident_detail_ids):
-        path = (folder_structure.list_pages / html)
+        path = (folder_structure.search_pages / html)
         target = SearchPage(page=Page(path))
         target.parse()
         self.assertEqual(target.instances_count, expected_instance_count)

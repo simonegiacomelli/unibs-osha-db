@@ -1,9 +1,10 @@
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from bs4 import BeautifulSoup, Tag
 
 import lista_istanze_url
+from osha.detail_page import DetailPage
 from scraper.page import Page
 
 self_folder = Path(__file__).parent
@@ -16,16 +17,16 @@ class SearchPage:
         self.page_size = page_size
         # from body
         self.instances_count = -1
-        self.accident_detail_ids = []
+        self.accident_detail_ids: List[str] = []
         self.results_text = 'na'
         if page is None:
             office_folder = self_folder.parent / 'data' / ('office' + self.office)
             base_name = f'office-{self.office}-index-{self.accident_index:06}'
-            accident_search_path = office_folder / f'{base_name}-search.html'
+            path = office_folder / f'{base_name}-search.html'
             url = lista_istanze_url.lista_istanze_url(office, accident_index, page_size)
-            self.search_page = Page(accident_search_path, url)
+            self.page = Page(path, url)
         else:
-            self.search_page = page
+            self.page = page
 
     def next(self) -> Optional['SearchPage']:
         following_index = self.accident_index + self.page_size
@@ -35,9 +36,8 @@ class SearchPage:
         return pagina
 
     def parse(self):
-        self.search_page.load()
-        soup = BeautifulSoup(self.search_page.body, 'html.parser')
-
+        self.page.load()
+        soup = self.page.beautifulsoup()
         self._fill_results_info(soup)
         print(f"`{self.results_text}`")
         elems = soup.find_all('input', {'name': 'id'})
@@ -60,3 +60,8 @@ class SearchPage:
         else:
             self.results_text = ''
             self.instances_count = -1
+
+    def load_details(self) -> DetailPage:
+        path = Path(str(self.page.path).removesuffix('-search.html') + '-detail.html')
+        dp = DetailPage(self.accident_detail_ids, path)
+        return dp

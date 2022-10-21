@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from bs4 import BeautifulSoup
+
 from url_helper import url_open
 
 
@@ -34,3 +36,7 @@ class Page:
     def salva(self):
         self.path.parent.mkdir(exist_ok=True, parents=True)
         self.path.write_text(self.body)
+
+    def beautifulsoup(self) -> BeautifulSoup:
+        bs = BeautifulSoup(self.body, 'html.parser')
+        return bs
