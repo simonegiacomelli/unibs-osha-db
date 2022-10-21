@@ -9,9 +9,11 @@ def main():
     istanza_index = 0
     codici_office = estrai_codici_office()
     for office_index, office in enumerate(codici_office):
-        print(f'Codice office {office} {office_index + 1}/{len(codici_office)}')
+        office_ord = office_index + 1
+        office_len = len(codici_office)
         pagina = SearchPage(office, istanza_index, pagina_size)
         while pagina is not None:
+            print(f'{office_ord:3}/{office_len:03} ', end='')
             pagina.parse()
             pagina.load_details().parse()
             pagina = pagina.next()
