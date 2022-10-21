@@ -12,7 +12,7 @@ def main():
         print(f'Codice office {office} {office_index + 1}/{len(codici_office)}')
         pagina = SearchPage(office, istanza_index, pagina_size)
         while pagina is not None:
-            pagina.load()
+            pagina.parse()
             pagina = pagina.next()
 
 

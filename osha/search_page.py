@@ -33,12 +33,8 @@ class SearchPage:
         pagina = SearchPage(self.office, following_index, self.page_size)
         return pagina
 
-    def load(self):
-        self.search_page.load()
-        self.parse()
-        print(f"`{self.results_text}`")
-
     def parse(self):
+        self.search_page.load()
         soup = BeautifulSoup(self.search_page.body, 'html.parser')
 
         def results_filter(tag: Tag):
@@ -53,3 +49,4 @@ class SearchPage:
         else:
             self.results_text = ''
             self.instances_count = -1
+        print(f"`{self.results_text}`")

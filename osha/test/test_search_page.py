@@ -14,5 +14,5 @@ class TestInstanceList(unittest.TestCase):
     def verify_instance_count(self, expected_instance_count, html):
         path = (folder_structure.list_pages / html)
         target = SearchPage(page=Page(path))
-        target.load()
+        target.parse()
         self.assertEqual(target.instances_count, expected_instance_count)
