@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 import lista_istanze_url
 from cache.source import Source, T
+from cache.source_cache import source_wrap
 from osha.detail_page import DetailPage
 from scraper.page import CachablePage
 
@@ -27,6 +28,7 @@ class SearchData(BaseModel):
             return None
         pagina = SearchPage(self.office, following_index, self.page_size)
         return pagina
+
 
 
 class SearchPage(Source[SearchData]):

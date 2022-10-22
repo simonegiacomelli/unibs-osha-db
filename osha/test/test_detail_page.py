@@ -25,5 +25,5 @@ class TestInstanceList(unittest.TestCase):
     def _target(self, html) -> DetailPage:
         path = (folder_structure.detail_pages / html)
         target = DetailPage(page=CachablePage(path))
-        target.parse()
+        target.data()
         return target
