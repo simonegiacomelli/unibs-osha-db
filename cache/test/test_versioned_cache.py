@@ -4,13 +4,13 @@ from pathlib import Path
 from typing import Callable
 
 from core.files import dir_empty
-from cache.cache import Cache, Cache_ABC
+from cache.versioned_cache import VersionedCache, VersionedCacheABC
 from cache.version_descriptor import VersionDescriptor, VD_Numbered, VD_List
 
 v1 = VD_Numbered(version=1)
 
 
-class Test_Cache(unittest.TestCase):
+class TestVersionedCache(unittest.TestCase):
 
     def test_emptyCacheFolder_shouldBeNotValid(self):
         target = self.new_target()
@@ -51,9 +51,9 @@ class Test_Cache(unittest.TestCase):
         target.delete()
         self.assertTrue(dir_empty(target.folder))
 
-    def new_target(self, current_version: Callable[[], VersionDescriptor] = lambda: v1) -> Cache_ABC:
+    def new_target(self, current_version: Callable[[], VersionDescriptor] = lambda: v1) -> VersionedCacheABC:
         tmp1 = _tmp_folder('tmp1')
-        target = Cache(tmp1 / 'foo', current_version)
+        target = VersionedCache(tmp1 / 'foo', current_version)
         return target
 
 

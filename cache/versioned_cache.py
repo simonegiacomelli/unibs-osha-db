@@ -7,7 +7,7 @@ from typing import Callable
 from cache.version_descriptor import VersionDescriptor
 
 
-class Cache_ABC(ABC):
+class VersionedCacheABC(ABC):
     folder: Path
     prefix: str
     version_factory: Callable[[], VersionDescriptor]
@@ -26,7 +26,7 @@ class Cache_ABC(ABC):
         pass
 
 
-class Cache(Cache_ABC):
+class VersionedCache(VersionedCacheABC):
 
     def __init__(self, prefix_path: Path,
                  current_version: Callable[[], VersionDescriptor]):

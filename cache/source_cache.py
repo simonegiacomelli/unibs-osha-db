@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Optional, Generic, Callable
 
-from cache.cache import Cache
+from cache.versioned_cache import VersionedCache
 from cache.source import Source, T
 from cache.version_descriptor import VersionDescriptor
 
@@ -11,7 +11,7 @@ class SourceCache(Source, Generic[T]):
     def __init__(self, source: Source, prefix_path: Path):
         super().__init__(source.name, source.kind + '-CACHED', source.constructor)
         self.source = source
-        self.cache = Cache(prefix_path, source.version)
+        self.cache = VersionedCache(prefix_path, source.version)
 
     def data(self) -> Optional[T]:
         self._load_internal()

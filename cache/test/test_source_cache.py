@@ -5,7 +5,7 @@ from pydantic import BaseModel
 
 from cache.source import Source, T
 from cache.source_cache import source_wrap
-from cache.test.test_cache import _tmp_folder
+from cache.test.test_versioned_cache import _tmp_folder
 
 
 class TestSourceCache(unittest.TestCase):
