@@ -19,11 +19,16 @@ def main():
         search_page = SearchPage(office, istanza_index, pagina_size)
         while search_page is not None:
             log(f'{office_ord:3}/{office_len:03} ', end='')
+            if search_page.office == '':
+                print('')
+                print(f'{office_index=} {office=} ')
+                raise ValueError(f'search_page.office is blank')
             search_data: SearchData = source_wrap(search_page, search_page.cache_prefix).data()
 
-            spp = str(search_page.cache_prefix) + '-detail'
-            detail_page = DetailPage(search_data.accident_detail_ids, Path(spp + '-page.html'))
-            source_wrap(detail_page, Path(spp)).data()
+            if len(search_data.accident_detail_ids) > 0:
+                spp = str(search_page.cache_prefix) + '-detail'
+                detail_page = DetailPage(search_data.accident_detail_ids, Path(spp + '-page.html'))
+                source_wrap(detail_page, Path(spp)).data()
 
             search_page = search_data.next_search_page()
 

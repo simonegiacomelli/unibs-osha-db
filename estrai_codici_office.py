@@ -14,10 +14,12 @@ def estrai_codici_office() -> List[str]:
         except ValueError as e:
             continue
         value = value_end[:idx]
-        result.append(value)
-    return result
+        value = value.strip()
+        if value != '':
+            result.append(value)
+    return list(sorted(result))
 
 
 if __name__ == '__main__':
-    for value in estrai_codici_office():
-        print(value)
+    for idx, value in enumerate(estrai_codici_office()):
+        print(f'idx={idx:3} {value}')

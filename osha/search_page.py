@@ -34,6 +34,7 @@ class SearchData(BaseModel):
 class SearchPage(Source[SearchData]):
     def __init__(self, office: str = '', accident_index=0, page_size=20, page: CachablePage = None):
         super().__init__('name1', 'search-page', SearchData)
+        self.office = office
         self.d = SearchData(
             office=office,
             accident_index=accident_index,
