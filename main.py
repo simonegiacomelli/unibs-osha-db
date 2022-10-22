@@ -1,10 +1,4 @@
-from collections import defaultdict
-from pathlib import Path
-
 from cache.source_cache import source_wrap
-from core.log_helper import log
-from estrai_codici_office import estrai_codici_office
-from osha.detail_page import DetailPage
 from osha.search_page import SearchPage, SearchData
 
 
@@ -14,7 +8,7 @@ def main():
     pagina_size = 1000
     accident_index = 0
 
-    search_page = SearchPage('', accident_index, pagina_size)
+    search_page = SearchPage(accident_index, pagina_size)
     while search_page is not None:
         search_data: SearchData = source_wrap(search_page, search_page.cache_prefix).data()
 

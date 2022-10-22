@@ -33,7 +33,7 @@ url_view = 'https://www.osha.gov/pls/imis/accidentsearch.search?' \
            '&p_show=20'
 
 
-def lista_istanze_url(office: str, istanza_index: int, pagina_size: int) -> str:
+def lista_istanze_url(istanza_index: int, pagina_size: int, office: str = '') -> str:
     url_template = 'https://www.osha.gov/pls/imis/accidentsearch.search?' \
                    'sic=' \
                    '&sicgroup=' \

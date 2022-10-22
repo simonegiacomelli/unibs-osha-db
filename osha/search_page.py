@@ -1,12 +1,11 @@
 from pathlib import Path
 from typing import Optional, List
 
-from bs4 import BeautifulSoup, Tag
+from bs4 import Tag
 from pydantic import BaseModel
 
 import lista_istanze_url
-from cache.source import Source, T
-from cache.source_cache import source_wrap
+from cache.source import Source
 from osha.detail_page import DetailPage
 from scraper.page import CachablePage
 
@@ -14,7 +13,6 @@ self_folder = Path(__file__).parent
 
 
 class SearchData(BaseModel):
-    office: str
     accident_index: int
     page_size: int
     instances_count: int = -1
@@ -26,25 +24,21 @@ class SearchData(BaseModel):
         following_index = self.accident_index + self.page_size
         if following_index >= self.instances_count:
             return None
-        pagina = SearchPage(self.office, following_index, self.page_size)
+        pagina = SearchPage(following_index, self.page_size)
         return pagina
 
 
-
 class SearchPage(Source[SearchData]):
-    def __init__(self, office: str = '', accident_index=0, page_size=20, page: CachablePage = None):
+    def __init__(self, accident_index=0, page_size=20, page: CachablePage = None):
         super().__init__('name1', 'search-page', SearchData)
-        self.office = office
         self.d = SearchData(
-            office=office,
             accident_index=accident_index,
             page_size=page_size
         )
         # from body
         if page is None:
-            self.cache_prefix = self_folder.parent / 'data' / ('office' + self.d.office) \
-                                / f'office-{self.d.office}-index-{self.d.accident_index:06}'
-            self.d.url = lista_istanze_url.lista_istanze_url(office, accident_index, page_size)
+            self.cache_prefix = self_folder.parent / 'data' / f'index-{self.d.accident_index:06}'
+            self.d.url = lista_istanze_url.lista_istanze_url(accident_index, page_size)
             self.page = CachablePage(Path(f'{self.cache_prefix}-search.html'), self.d.url)
         else:
             self.page = page
