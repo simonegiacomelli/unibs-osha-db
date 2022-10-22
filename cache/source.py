@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import List, Optional, TypeVar, Generic, Callable
+from typing import List, Optional, TypeVar, Generic, Callable, Type
 
 from pydantic import BaseModel
 
@@ -8,8 +8,9 @@ from cache.version_descriptor import VersionDescriptor, VD_Numbered
 T = TypeVar("T", bound=BaseModel)
 
 
-class DataSource(ABC, Generic[T]):
-    def __init__(self, name: str, kind: str, constructor: Callable[[], T]):
+class Source(ABC, Generic[T]):
+    def __init__(self, name: str, kind: str, constructor: Type[T]):
+        self.constructor = constructor
         self.kind = kind
         self.name = name
         self.errors: List[str] = []
