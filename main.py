@@ -1,3 +1,4 @@
+from core.log_helper import log
 from estrai_codici_office import estrai_codici_office
 from osha.search_page import SearchPage
 
@@ -13,7 +14,7 @@ def main():
         office_len = len(codici_office)
         pagina = SearchPage(office, istanza_index, pagina_size)
         while pagina is not None:
-            print(f'{office_ord:3}/{office_len:03} ', end='')
+            log(f'{office_ord:3}/{office_len:03} ', end='')
             pagina.parse()
             pagina.load_details().parse()
             pagina = pagina.next()

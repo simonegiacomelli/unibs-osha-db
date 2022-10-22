@@ -1,7 +1,9 @@
+import sys
 from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+from core.run_catching import run_catching
 from url_helper import url_open
 
 
@@ -24,7 +26,11 @@ class Page:
             print(f'pagina {p} gia'' presente ', end='')
 
     def load_from_url(self):
-        status, body = url_open(self.url)
+        def up():
+            return url_open(self.url)
+
+        res = run_catching(up, retry=sys.maxsize)
+        status, body = res
         body = f'<!-- url: {self.url} -->\n' + body.lstrip()
         self.status = status
         self.body = body
