@@ -3,6 +3,7 @@ from pathlib import Path
 
 from bs4 import BeautifulSoup
 
+from core.log_helper import log
 from core.run_catching import run_catching
 from url_helper import url_open
 
@@ -26,10 +27,12 @@ class Page:
             print(f'pagina {p} gia'' presente ', end='')
 
     def load_from_url(self):
-        def up():
+        def function():
             return url_open(self.url)
 
-        res = run_catching(up, retry=sys.maxsize)
+        def on_error(ex):
+            log(f'url in process: `{self.url}`')
+        res = run_catching(function, retry=sys.maxsize, on_error=on_error)
         status, body = res
         body = f'<!-- url: {self.url} -->\n' + body.lstrip()
         self.status = status
