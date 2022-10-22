@@ -45,6 +45,6 @@ class DetailPage:
             self.data.load_from_html(self.page.body)
             self.json_file.serialize_json(self.data)
         else:
-            log(f'Using cache {self.json_file.name}')
+            log(f'Using cache {self.json_file}')
         self.data = self.json_file.deserialize_json(DetailData)
         return self.data

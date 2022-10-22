@@ -16,7 +16,7 @@ class CachablePage:
         self.body = ''
 
     def load(self):
-        p = self.path.name
+        p = self.path
         if not self.path.exists():
             log(f'pagina {p} segue caricamento... ')
             self.load_from_url()
