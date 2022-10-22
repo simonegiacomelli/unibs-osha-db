@@ -53,7 +53,7 @@ class Test_Cache(unittest.TestCase):
 
     def new_target(self, current_version: Callable[[], VersionDescriptor] = lambda: v1) -> Cache_ABC:
         tmp1 = _tmp_folder('tmp1')
-        target = Cache(tmp1, 'foo', current_version)
+        target = Cache(tmp1 / 'foo', current_version)
         return target
 
 

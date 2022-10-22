@@ -28,12 +28,13 @@ class Cache_ABC(ABC):
 
 class Cache(Cache_ABC):
 
-    def __init__(self, folder: Path, prefix: str,
+    def __init__(self, prefix_path: Path,
                  current_version: Callable[[], VersionDescriptor]):
         super().__init__()
         self.current_version = current_version
-        self.folder = folder
-        self.prefix = prefix
+
+        self.folder = prefix_path.parent
+        self.prefix = prefix_path.name
         self.path_version = self.path_for('version.json')
 
     def path_for(self, filename_suffix) -> Path:
