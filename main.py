@@ -1,3 +1,4 @@
+from cache.source_cache import source_wrap
 from core.log_helper import log
 from estrai_codici_office import estrai_codici_office
 from osha.search_page import SearchPage
@@ -15,8 +16,9 @@ def main():
         pagina = SearchPage(office, istanza_index, pagina_size)
         while pagina is not None:
             log(f'{office_ord:3}/{office_len:03} ', end='')
-            pagina.parse()
-            pagina.load_details().parse()
+            pagina_cached = source_wrap(pagina, pagina.cache_prefix)
+            pagina_cached.data()
+            # pagina.load_details().parse()
             pagina = pagina.next()
 
 

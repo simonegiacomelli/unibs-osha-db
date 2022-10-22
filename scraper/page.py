@@ -8,7 +8,7 @@ from core.run_catching import run_catching
 from url_helper import url_open
 
 
-class Page:
+class CachablePage:
     def __init__(self, path: Path, url: str = ''):
         self.path = path
         self.url = url

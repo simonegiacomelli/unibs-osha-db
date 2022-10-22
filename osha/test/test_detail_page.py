@@ -3,7 +3,7 @@ import unittest
 from osha.detail_page import DetailPage
 from osha.search_page import SearchPage
 from osha.test.test_data.folder_structure import folder_structure
-from scraper.page import Page
+from scraper.page import CachablePage
 
 
 class TestInstanceList(unittest.TestCase):
@@ -24,6 +24,6 @@ class TestInstanceList(unittest.TestCase):
 
     def _target(self, html) -> DetailPage:
         path = (folder_structure.detail_pages / html)
-        target = DetailPage(page=Page(path))
+        target = DetailPage(page=CachablePage(path))
         target.parse()
         return target

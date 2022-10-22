@@ -2,7 +2,7 @@ import unittest
 
 from osha.search_page import SearchPage
 from osha.test.test_data.folder_structure import folder_structure
-from scraper.page import Page
+from scraper.page import CachablePage
 
 
 class TestInstanceList(unittest.TestCase):
@@ -22,7 +22,7 @@ class TestInstanceList(unittest.TestCase):
 
     def verify_instance_count(self, expected_instance_count, html, accident_detail_ids):
         path = (folder_structure.search_pages / html)
-        target = SearchPage(page=Page(path))
-        target.parse()
-        self.assertEqual(target.instances_count, expected_instance_count)
-        self.assertEqual(target.accident_detail_ids, accident_detail_ids)
+        target = SearchPage(page=CachablePage(path))
+        data = target.data()
+        self.assertEqual(data.instances_count, expected_instance_count)
+        self.assertEqual(data.accident_detail_ids, accident_detail_ids)

@@ -2,50 +2,65 @@ from pathlib import Path
 from typing import Optional, List
 
 from bs4 import BeautifulSoup, Tag
+from pydantic import BaseModel
 
 import lista_istanze_url
+from cache.source import Source, T
 from osha.detail_page import DetailPage
-from scraper.page import Page
+from scraper.page import CachablePage
 
 self_folder = Path(__file__).parent
 
 
-class SearchPage:
-    def __init__(self, office: str = '', accident_index=0, page_size=20, page: Page = None):
-        self.office = office
-        self.accident_index = accident_index
-        self.page_size = page_size
+class SearchData(BaseModel):
+    office: str
+    accident_index: int
+    page_size: int
+    instances_count: int = -1
+    accident_detail_ids: List[str] = []
+    results_text: str = 'na'
+    url: str = ''
+
+
+class SearchPage(Source[SearchData]):
+    def __init__(self, office: str = '', accident_index=0, page_size=20, page: CachablePage = None):
+        super().__init__('name1', 'search-page', SearchData)
+        self.d = SearchData(
+            office=office,
+            accident_index=accident_index,
+            page_size=page_size
+        )
+        self.cache_prefix = self_folder.parent / 'data' / ('office' + self.d.office) \
+                            / f'office-{self.d.office}-index-{self.d.accident_index:06}'
         # from body
-        self.instances_count = -1
-        self.accident_detail_ids: List[str] = []
-        self.results_text = 'na'
         if page is None:
-            office_folder = self_folder.parent / 'data' / ('office' + self.office)
-            base_name = f'office-{self.office}-index-{self.accident_index:06}'
-            path = office_folder / f'{base_name}-search.html'
-            url = lista_istanze_url.lista_istanze_url(office, accident_index, page_size)
-            self.page = Page(path, url)
+            self.d.url = lista_istanze_url.lista_istanze_url(office, accident_index, page_size)
+            self.page = CachablePage(Path(f'{self.cache_prefix}-search.html'), self.d.url)
         else:
             self.page = page
 
+    def data(self) -> Optional[SearchData]:
+        self._parse()
+        return self.d
+
     def next(self) -> Optional['SearchPage']:
-        following_index = self.accident_index + self.page_size
-        if following_index >= self.instances_count:
+        following_index = self.d.accident_index + self.d.page_size
+        if following_index >= self.d.instances_count:
             return None
-        pagina = SearchPage(self.office, following_index, self.page_size)
+        pagina = SearchPage(self.d.office, following_index, self.d.page_size)
         return pagina
 
-    def parse(self):
+    def _parse(self):
         self.page.load()
         soup = self.page.beautifulsoup()
         self._fill_results_info(soup)
-        print(f"`{self.results_text}`")
+        print(f"`{self.d.results_text}`")
         elems = soup.find_all('input', {'name': 'id'})
-        self.accident_detail_ids = []
+        self.d.accident_detail_ids = []
         for e in elems:
             e: Tag
             accident_detail_id = e.attrs.get('value')
-            self.accident_detail_ids.append(accident_detail_id)
+            self.d.accident_detail_ids.append(accident_detail_id)
 
     def _fill_results_info(self, soup):
         def results_filter(tag: Tag):
@@ -54,14 +69,14 @@ class SearchPage:
 
         h = soup.find(results_filter)
         if h is not None:
-            self.results_text = h.text.strip()
-            txt = self.results_text.split(' of ')[1]
-            self.instances_count = int(txt)
+            self.d.results_text = h.text.strip()
+            txt = self.d.results_text.split(' of ')[1]
+            self.d.instances_count = int(txt)
         else:
-            self.results_text = ''
-            self.instances_count = -1
+            self.d.results_text = ''
+            self.d.instances_count = -1
 
     def load_details(self) -> DetailPage:
         path = Path(str(self.page.path).removesuffix('-search.html') + '-detail.html')
-        dp = DetailPage(self.accident_detail_ids, path)
+        dp = DetailPage(self.d.accident_detail_ids, path)
         return dp
