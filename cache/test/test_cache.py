@@ -1,11 +1,8 @@
-import shutil
 import unittest
 from pathlib import Path
 
 from cache.cache import Cache, CacheABC
 from cache.test.test_versioned_cache import _tmp_folder
-from cache.version_descriptor import VD_Numbered, VD_List
-from cache.versioned_cache import VersionedCacheABC
 from core.files import dir_empty
 
 
@@ -32,4 +29,3 @@ if __name__ == '__main__':
     unittest.main()
 
 parent = Path(__file__).parent
-

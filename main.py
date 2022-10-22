@@ -1,5 +1,4 @@
-from cache.source_cache import source_wrap
-from osha.search_page import SearchPage, SearchData
+from osha.search_page import SearchPage
 
 
 # url = 'https://www.osha.gov/pls/imis/AccidentSearch.html'
@@ -10,7 +9,7 @@ def main():
 
     search_page = SearchPage(accident_index, pagina_size)
     while search_page is not None:
-        search_data: SearchData = source_wrap(search_page, search_page.cache_prefix).data()
+        search_data = search_page.get_data()
 
         # if len(search_data.accident_detail_ids) > 0:
         #     spp = str(search_page.cache_prefix) + '-detail'

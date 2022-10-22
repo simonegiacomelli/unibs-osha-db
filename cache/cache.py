@@ -1,17 +1,14 @@
-import json
-import traceback
 from abc import ABC
 from pathlib import Path
-from typing import Callable
 
-from cache.version_descriptor import VersionDescriptor
+from cache.path_ext import PathExt
 
 
 class CacheABC(ABC):
     folder: Path
     prefix: str
 
-    def path_for(self, filename_suffix) -> Path:
+    def path_for(self, filename_suffix) -> PathExt:
         pass
 
     def delete(self):
@@ -26,8 +23,8 @@ class Cache(CacheABC):
         self.folder = prefix_path.parent
         self.prefix = prefix_path.name
 
-    def path_for(self, filename_suffix) -> Path:
-        return self.folder / (self.prefix + '.' + filename_suffix)
+    def path_for(self, filename_suffix) -> PathExt:
+        return PathExt(self.folder / (self.prefix + '.' + filename_suffix))
 
     def delete(self):
         for f in self.folder.glob(self.prefix + '.*'):
