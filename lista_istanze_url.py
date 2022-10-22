@@ -47,7 +47,7 @@ def lista_istanze_url(office: str, istanza_index: int, pagina_size: int) -> str:
                    f'&office={office}' \
                    '&startmonth=12' \
                    '&startday=31' \
-                   '&startyear=2099' \
+                   '&startyear=2020' \
                    '&endmonth=1' \
                    '&endday=1' \
                    '&endyear=1984' \
