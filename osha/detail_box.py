@@ -1,6 +1,5 @@
-from bs4 import Tag
+from pydantic import BaseModel
 
 
-class DetailBox:
-    def __init__(self, box: Tag):
-        self.box = box
+class DetailBox(BaseModel):
+    pass

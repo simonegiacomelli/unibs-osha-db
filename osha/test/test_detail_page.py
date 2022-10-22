@@ -1,9 +1,7 @@
 import unittest
 
-from osha.detail_page import DetailPage
-from osha.search_page import SearchPage
+from osha.detail_page import DetailData
 from osha.test.test_data.folder_structure import folder_structure
-from scraper.page import CachablePage
 
 
 class TestInstanceList(unittest.TestCase):
@@ -22,8 +20,9 @@ class TestInstanceList(unittest.TestCase):
         box = target.boxes[0]
         pass
 
-    def _target(self, html) -> DetailPage:
+    def _target(self, html) -> DetailData:
         path = (folder_structure.detail_pages / html)
-        target = DetailPage(page=CachablePage(path))
-        target.data()
+        target = DetailData()
+        target.load_from_html(path.read_text())
+
         return target

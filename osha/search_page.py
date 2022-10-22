@@ -56,7 +56,7 @@ class SearchPage:
     def __init__(self, accident_index=0, page_size=20, page: CachablePage = None):
         self.data = SearchData(accident_index=accident_index, page_size=page_size)
         self.cache = Cache(self_folder.parent / 'data' / f'index-{self.data.accident_index:06}')
-        self.data_file = self.cache.path_for('search_data.json')
+        self.json_file = self.cache.path_for('search_data.json')
         # from body
         if page is None:
             self.data.url = lista_istanze_url.lista_istanze_url(accident_index, page_size)
@@ -65,13 +65,13 @@ class SearchPage:
             self.page = page
 
     def get_data(self) -> SearchData:
-        if not self.data_file.exists():
+        if not self.json_file.exists():
             self.page.load()
             self.data.load_from_html(self.page.body)
-            self.data_file.serialize_json(self.data)
+            self.json_file.serialize_json(self.data)
         else:
-            log(f'Using cache {self.data_file.name}')
-        self.data = self.data_file.deserialize_json(SearchData)
+            log(f'Using cache {self.json_file.name}')
+        self.data = self.json_file.deserialize_json(SearchData)
         return self.data
 
     def load_details(self) -> DetailPage:

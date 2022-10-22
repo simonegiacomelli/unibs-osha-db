@@ -1,3 +1,5 @@
+from core.collections import chunks
+from osha.detail_page import DetailPage
 from osha.search_page import SearchPage
 
 
@@ -11,10 +13,9 @@ def main():
     while search_page is not None:
         search_data = search_page.get_data()
 
-        # if len(search_data.accident_detail_ids) > 0:
-        #     spp = str(search_page.cache_prefix) + '-detail'
-        #     detail_page = DetailPage(search_data.accident_detail_ids, Path(spp + '-page.html'))
-        #     source_wrap(detail_page, Path(spp)).data()
+        if len(search_data.accident_detail_ids) > 0:
+            for accident_detail_ids in chunks(search_data.accident_detail_ids, 20):
+                DetailPage(accident_detail_ids, search_page.cache).get_data()
 
         search_page = search_data.next_search_page()
 
