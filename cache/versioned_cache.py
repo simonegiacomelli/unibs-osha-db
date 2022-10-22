@@ -4,17 +4,13 @@ from abc import ABC
 from pathlib import Path
 from typing import Callable
 
+from cache.cache import CacheABC, Cache
 from cache.version_descriptor import VersionDescriptor
 
 
-class VersionedCacheABC(ABC):
-    folder: Path
-    prefix: str
+class VersionedCacheABC(CacheABC):
     version_factory: Callable[[], VersionDescriptor]
     current_version: Callable[[], VersionDescriptor]
-
-    def path_for(self, filename_suffix) -> Path:
-        pass
 
     def is_valid(self) -> bool:
         pass
@@ -22,23 +18,14 @@ class VersionedCacheABC(ABC):
     def set_valid(self):
         pass
 
-    def delete(self):
-        pass
 
-
-class VersionedCache(VersionedCacheABC):
+class VersionedCache(VersionedCacheABC, Cache):
 
     def __init__(self, prefix_path: Path,
                  current_version: Callable[[], VersionDescriptor]):
-        super().__init__()
+        super(VersionedCache, self).__init__(prefix_path)
         self.current_version = current_version
-
-        self.folder = prefix_path.parent
-        self.prefix = prefix_path.name
         self.path_version = self.path_for('version.json')
-
-    def path_for(self, filename_suffix) -> Path:
-        return self.folder / (self.prefix + '.' + filename_suffix)
 
     def set_valid(self):
         version = self.current_version()
@@ -57,7 +44,3 @@ class VersionedCache(VersionedCacheABC):
         except Exception:
             print(traceback.format_exc())
             return False
-
-    def delete(self):
-        for f in self.folder.glob(self.prefix + '.*'):
-            f.unlink()
