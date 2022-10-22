@@ -21,6 +21,13 @@ class SearchData(BaseModel):
     results_text: str = 'na'
     url: str = ''
 
+    def next_search_page(self) -> Optional['SearchPage']:
+        following_index = self.accident_index + self.page_size
+        if following_index >= self.instances_count:
+            return None
+        pagina = SearchPage(self.office, following_index, self.page_size)
+        return pagina
+
 
 class SearchPage(Source[SearchData]):
     def __init__(self, office: str = '', accident_index=0, page_size=20, page: CachablePage = None):
@@ -30,10 +37,10 @@ class SearchPage(Source[SearchData]):
             accident_index=accident_index,
             page_size=page_size
         )
-        self.cache_prefix = self_folder.parent / 'data' / ('office' + self.d.office) \
-                            / f'office-{self.d.office}-index-{self.d.accident_index:06}'
         # from body
         if page is None:
+            self.cache_prefix = self_folder.parent / 'data' / ('office' + self.d.office) \
+                                / f'office-{self.d.office}-index-{self.d.accident_index:06}'
             self.d.url = lista_istanze_url.lista_istanze_url(office, accident_index, page_size)
             self.page = CachablePage(Path(f'{self.cache_prefix}-search.html'), self.d.url)
         else:
@@ -42,13 +49,6 @@ class SearchPage(Source[SearchData]):
     def data(self) -> Optional[SearchData]:
         self._parse()
         return self.d
-
-    def next(self) -> Optional['SearchPage']:
-        following_index = self.d.accident_index + self.d.page_size
-        if following_index >= self.d.instances_count:
-            return None
-        pagina = SearchPage(self.d.office, following_index, self.d.page_size)
-        return pagina
 
     def _parse(self):
         self.page.load()

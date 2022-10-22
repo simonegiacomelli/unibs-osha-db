@@ -13,13 +13,12 @@ def main():
     for office_index, office in enumerate(codici_office):
         office_ord = office_index + 1
         office_len = len(codici_office)
-        pagina = SearchPage(office, istanza_index, pagina_size)
-        while pagina is not None:
+        search_page = SearchPage(office, istanza_index, pagina_size)
+        while search_page is not None:
             log(f'{office_ord:3}/{office_len:03} ', end='')
-            pagina_cached = source_wrap(pagina, pagina.cache_prefix)
-            pagina_cached.data()
+            search_data = source_wrap(search_page, search_page.cache_prefix).data()
             # pagina.load_details().parse()
-            pagina = pagina.next()
+            search_page = search_data.next_search_page()
 
 
 if __name__ == '__main__':
