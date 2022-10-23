@@ -16,10 +16,17 @@ class DetailData(BaseModel):
 
     def load_from_html(self, html):
         soup = beautifulsoup(html)
-        elements = soup.find_all('table')
+        tables = soup.find_all('table')
+        titles = soup.find_all('p', class_='text-center')
+        if len(tables) != len(titles):
+            raise ValueError('mismatch in detail_page')
+
         self.boxes = []
-        for e in elements:
+        for idx, table in enumerate(tables):
             box = DetailBox()
+            box.main_title = titles[idx].text.strip()
+            box.load_from(table.find_all('tr'))
+
             self.boxes.append(box)
 
 
