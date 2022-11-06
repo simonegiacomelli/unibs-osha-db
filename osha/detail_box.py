@@ -84,17 +84,16 @@ class DetailBox(BaseModel):
     def consume_description(self, table):
         row = table[0]
         if len(row) != 1:
-            invalid(f'Description row with one column expected')
+            invalid(f'Description row with one column expected `{table}`')
         self.description = row[0]
         del table[0]
 
     def consume_keywords(self, table):
-        row = table[0]
-        if len(row) != 1:
-            invalid(f'Keyword row with one column expected, table: `{table}`')
-        keywords = row[0]
         keywords_prefix = 'Keywords: \n'
-        if not keywords.startswith(keywords_prefix):
+        row = table[0]
+        keywords = row[0]
+        accept = len(row) == 1 and keywords.startswith(keywords_prefix)
+        if not accept:
             return
 
         self.keywords = keywords.removeprefix('Keywords: \n')
