@@ -6,9 +6,14 @@ from pydantic import BaseModel
 from scraper.page import beautifulsoup
 
 
+class Link(BaseModel):
+    href: str
+    text: str
+
+
 class Table(BaseModel):
     header: Tuple[str, ...] = ()
-    rows: List[Tuple[str, ...]] = []
+    rows: List[Tuple[str | Link, ...]] = []
 
 
 class TableRow:
@@ -43,7 +48,7 @@ class OshaTable(BaseModel):
         for tr in trs:
             table_row = TableRow(tr)
             if table_row.is_header:
-                last_table = self.content_tables_by_header(last_table.header)
+                last_table = self.content_tables_by_header(table_row.header)
                 if last_table is None:
                     last_table = self._add_table(table_row.header)
             elif table_row.is_data:
@@ -56,6 +61,20 @@ class OshaTable(BaseModel):
         h = tuple(header)
         t = self.tables_dict.get(h, None)
         return t
+
+    def content_tables_by_header_partial(self, header: Sequence[str]) -> Optional[Table]:
+        h = tuple(header)
+        h_len = len(h)
+        candidates: List[Table] = []
+        for key, value in self.tables_dict.items():
+            if len(key) >= h_len:
+                if key[:h_len] == h:
+                    candidates.append(value)
+        if len(candidates) == 0:
+            return None
+        if len(candidates) > 1:
+            raise Exception(f'Multiple tables are found with the same initial header `{h}`')
+        return candidates[0]
 
     def _add_table(self, header: Sequence[str]):
         t = Table()

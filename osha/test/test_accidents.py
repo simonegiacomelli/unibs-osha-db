@@ -1,7 +1,7 @@
 import unittest
 from typing import List
 
-from osha.accidents import Accident, load_accidents
+from osha.accidents import Accident, load_accidents, InspectionLine
 from osha.test.test_data.folder_structure import folder_structure
 
 
@@ -36,6 +36,17 @@ class TestAccidentDetailList(unittest.TestCase):
                           'Phillips 66 Company,Houston Chemical Complex'), i0.tuple())
         self.assertEqual(('106614373', '08/25/1989', '1795',
                           'Midwest Metals Industries, Inc.'), i1.tuple())
+
+        self.assertEqual(5, len(b.lines))
+        l0, *lr = b.lines
+        l0: InspectionLine
+        lr: List[InspectionLine]
+        self.assertEqual(('1', '106614357', '', '', 'Fatality', 'Burn/Scald(Heat)',
+                          'Occupation not reported'), l0.tuple())
+        for idx, ln in enumerate(lr):
+            self.assertEqual(
+                (str(idx + 2), '106614373', '', '', 'Hospitalized injury', 'Burn/Scald(Heat)',
+                 'Occupation not reported'), ln.tuple())
 
     def _load_accidents(self, html) -> List[Accident]:
         path = (folder_structure.detail_pages / html)
