@@ -43,19 +43,21 @@ class OshaTable(BaseModel):
         table = tables[0]
 
         trs: Sequence[bs4.Tag] = table.find_all('tr')
-        no_header = Table()
-        last_table = no_header
+        no_header = self._add_table(())
+        current_table = no_header
         for tr in trs:
             table_row = TableRow(tr)
             if table_row.is_header:
-                last_table = self.content_tables_by_header(table_row.header)
-                if last_table is None:
-                    last_table = self._add_table(table_row.header)
+                current_table = self.content_tables_by_header(table_row.header)
+                if current_table is None:
+                    current_table = self._add_table(table_row.header)
             elif table_row.is_data:
-                if len(table_row.data) == len(last_table.header):
-                    last_table.rows.append(table_row.data)
+                if len(table_row.data) == len(current_table.header):
+                    current_table.rows.append(table_row.data)
                 else:
-                    pass
+                    no_header.rows.append(table_row.data)
+            else:
+                raise Exception(f'row not recognized ```{tr.prettify()}```')
 
     def content_tables_by_header(self, header: Sequence[str]) -> Optional[Table]:
         h = tuple(header)

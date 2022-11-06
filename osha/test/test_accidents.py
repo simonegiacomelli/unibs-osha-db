@@ -48,6 +48,11 @@ class TestAccidentDetailList(unittest.TestCase):
                 (str(idx + 2), '106614373', '', '', 'Hospitalized injury', 'Burn/Scald(Heat)',
                  'Occupation not reported'), ln.tuple())
 
+        self.assertEqual('Accident: 14412233 -- Report ID: 0626600 -- Event Date: 08/24/1989', b.accident_header)
+        self.assertEqual('flammable vapors, explosion, process safety, maintenance, flammable liquid, fire, '
+                         'construction, welding, lockout', b.keywords)
+        self.assertEqual(_expected_description, b.description)
+
     def _load_accidents(self, html) -> List[Accident]:
         path = (folder_structure.detail_pages / html)
         return load_accidents(path.read_text())
@@ -56,3 +61,10 @@ class TestAccidentDetailList(unittest.TestCase):
 def assertStringContains(substring, string):
     if substring not in string:
         raise Exception(f'substring `{substring}` was not found in ```{string}```')
+
+
+_expected_description = 'TWO CONTRACTOR EMPLOYEES WERE DOING SEPARATE JOBS IN CLOSE PROXIMITY (50 FEET) OF EACH ' \
+                        'OTHER. ONE INVOLVED "HOT WORK" AND THE OTHER "COLD WORK" IN A CHEMICAL PLANT. A DRAIN VALVE ' \
+                        'LINE CAME OFF AN OFF-GAS SCRUBBER RELEASING A STREAM OF FLAMMABLE LIQUID AND GAS TO THE "HOT ' \
+                        'WORK" AREA. THIS CAUSED A FLASH FIRE AND EXPLOSION. THE DRAIN VALVE AND LINE WERE NOT LOCKED ' \
+                        'OR TAGGED AND IT WAS NOT KNOWN HOW THE LINE CAME OFF.'

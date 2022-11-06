@@ -1,44 +1,42 @@
 from typing import List
 
+from pydantic import BaseModel
+
 from osha.osha_table import OshaTable
 from scraper.page import beautifulsoup
 
 
-class Inspection:
-
-    def __init__(self):
-        self.inspection_id = ''
-        self.open_date = ''
-        self.sic = ''
-        self.establishment_name = ''
+class Inspection(BaseModel):
+    inspection_id = ''
+    open_date = ''
+    sic = ''
+    establishment_name = ''
 
     def tuple(self):
         return self.inspection_id, self.open_date, self.sic, self.establishment_name
 
 
-class InspectionLine:
-
-    def __init__(self):
-        # Employee #	Inspection	Age	Sex	Degree	Nature	Occupation
-        self.employee_number = ''
-        self.inspection_id = ''
-        self.age = ''
-        self.sex = ''
-        self.degree = ''
-        self.nature = ''
-        self.occupation = ''
+class InspectionLine(BaseModel):
+    employee_number = ''
+    inspection_id = ''
+    age = ''
+    sex = ''
+    degree = ''
+    nature = ''
+    occupation = ''
 
     def tuple(self):
         return self.employee_number, self.inspection_id, self.age, self.sex, self.degree, self.nature, self.occupation
 
 
-class Accident:
-
-    def __init__(self):
-        self.inspections: List[Inspection] = []
-        self.lines: List[InspectionLine] = []
-        self.main_title = ''
-        self.table_html = ''
+class Accident(BaseModel):
+    inspections: List[Inspection] = []
+    lines: List[InspectionLine] = []
+    main_title = ''
+    table_html = ''
+    accident_header = ''
+    description = ''
+    keywords = ''
 
 
 def load_accidents(html: str) -> List[Accident]:
@@ -57,9 +55,31 @@ def load_accidents(html: str) -> List[Accident]:
         ot.load_from_html(accident.table_html)
         _load_inspections(accident, ot)
         _load_inspections_lines(accident, ot)
+        _load_remaining(accident, ot)
 
         accidents.append(accident)
     return accidents
+
+
+def _load_remaining(accident: Accident, ot: OshaTable):
+    no_header = ot.content_tables_by_header(())
+    if no_header is None:
+        return
+    rows = no_header.rows
+
+    def pop(marker: str) -> str:
+        for idx, values in enumerate(rows):
+            if len(values) == 1:
+                content = str(values[0])
+                if content.startswith(marker):
+                    del rows[idx]
+                    return content
+        return ''
+
+    accident.accident_header = pop('Accident: ')
+    accident.keywords = pop('Keywords:').removeprefix('Keywords:').strip()
+    if len(rows) == 1 and len(rows[0]) == 1:
+        accident.description = str(rows[0][0]).strip()
 
 
 def _load_inspections(accident: Accident, ot: OshaTable):
