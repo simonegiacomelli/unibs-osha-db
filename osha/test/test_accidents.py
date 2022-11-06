@@ -24,6 +24,19 @@ class TestAccidentDetailList(unittest.TestCase):
                          b8.main_title)
         assertStringContains('Accident: 201520707 -- Report ID: 0111500 -- Event Date: 12/16/1999', b8.table_html)
 
+    def test_complex_box(self):
+        accidents = self._load_accidents('complex-box.html')
+        self.assertEqual(1, len(accidents))
+        b = accidents[0]
+        self.assertEqual('Accident: 14412233 - Employee Killed In Explosion Due To Chemical Release', b.main_title)
+        self.assertEqual(2, len(b.inspections))
+        i0 = b.inspections[0]
+        i1 = b.inspections[1]
+        self.assertEqual(('106614357', '08/25/1989', '2821',
+                          'Phillips 66 Company,Houston Chemical Complex'), i0.tuple())
+        self.assertEqual(('106614373', '08/25/1989', '1795',
+                          'Midwest Metals Industries, Inc.'), i1.tuple())
+
     def _load_accidents(self, html) -> List[Accident]:
         path = (folder_structure.detail_pages / html)
         return load_accidents(path.read_text())

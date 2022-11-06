@@ -8,7 +8,7 @@ class TestAccidentDetail(unittest.TestCase):
 
     def disabled_test_complex_box(self):
         target = self._target('complex-box.html')
-        self.assertEqual(2, len(target.content_tables))
+        self.assertEqual(2, len(target.tables_list))
 
     def _target(self, html) -> OshaTable:
         path = (folder_structure.detail_pages / html)
